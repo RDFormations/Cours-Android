@@ -1,0 +1,111 @@
+:root {
+	--primary: #673ab7;
+	--primary-dark: #512da8;
+	--accent: #ff4081;
+	--bg: #fafafa;
+	--surface: #ffffff;
+	--text: #212121;
+	--text-secondary: #757575;
+	--border: #e0e0e0;
+	--success: #4caf50;
+	--error: #f44336;
+	--warning: #ff9800;
+}
+
+[data-theme="dark"] {
+	--primary: #bb86fc;
+	--primary-dark: #9b59b6;
+	--accent: #ff4081;
+	--bg: #121212;
+	--surface: #1e1e1e;
+	--text: #e1e1e1;
+	--text-secondary: #b0b0b0;
+	--border: #333333;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+	background-color: var(--bg);
+	color: var(--text);
+	line-height: 1.5;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+	max-width: 100%;
+	padding: 16px;
+}
+
+.card {
+	background: var(--surface);
+	border-radius: 12px;
+	padding: 16px;
+	margin-bottom: 16px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	transition: background-color 0.3s;
+}
+
+.card-title {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--primary);
+	margin-bottom: 12px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 12px 20px;
+	border: none;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s;
+	gap: 8px;
+}
+
+.btn-primary {
+	background: var(--primary);
+	color: white;
+}
+
+.btn-primary:hover {
+	background: var(--primary-dark);
+	transform: translateY(-1px);
+}
+
+.btn-secondary {
+	background: var(--border);
+	color: var(--text);
+}
+
+.btn-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.btn-group .btn {
+	flex: 1;
+	min-width: 100px;
+}
+
+a {
+	color: var(--primary);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Demo Angular WebView</title>
+		<style>
+			:root {
+				--primary-color: #673ab7;
+				--bg-color: #fafafa;
+				--text-color: #333;
+				--card-bg: white;
+			}
+
+			[data-theme="dark"] {
+				--primary-color: #bb86fc;
+				--bg-color: #121212;
+				--text-color: #e1e1e1;
+				--card-bg: #1e1e1e;
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				transition: background-color 0.3s, color 0.3s;
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+					Oxygen, Ubuntu, sans-serif;
+				background-color: var(--bg-color);
+				color: var(--text-color);
+				padding: 16px;
+			}
+
+			.header {
+				background: linear-gradient(135deg, #673ab7 0%, #512da8 100%);
+				color: white;
+				padding: 20px;
+				border-radius: 12px;
+				margin-bottom: 16px;
+				text-align: center;
+			}
+
+			.header h1 {
+				font-size: 1.5rem;
+				margin-bottom: 8px;
+			}
+
+			.header p {
+				font-size: 0.9rem;
+				opacity: 0.9;
+			}
+
+			.card {
+				background-color: var(--card-bg);
+				border-radius: 12px;
+				padding: 16px;
+				margin-bottom: 16px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			.card h2 {
+				font-size: 1.1rem;
+				margin-bottom: 12px;
+				color: var(--primary-color);
+			}
+
+			.btn-group {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+
+			.btn {
+				padding: 12px 20px;
+				border: none;
+				border-radius: 8px;
+				font-size: 0.9rem;
+				font-weight: 500;
+				cursor: pointer;
+				flex: 1;
+				min-width: 120px;
+			}
+
+			.btn-primary {
+				background-color: var(--primary-color);
+				color: white;
+			}
+
+			.btn-secondary {
+				background-color: #e0e0e0;
+				color: #333;
+			}
+
+			.btn-danger {
+				background-color: #f44336;
+				color: white;
+			}
+
+			.console {
+				background-color: #263238;
+				color: #80cbc4;
+				border-radius: 8px;
+				padding: 12px;
+				font-family: "Courier New", monospace;
+				font-size: 0.85rem;
+				max-height: 150px;
+				overflow-y: auto;
+			}
+
+			.console-line {
+				margin: 4px 0;
+			}
+
+			.console-line.android {
+				color: #64b5f6;
+			}
+
+			.console-line.angular {
+				color: #81c784;
+			}
+
+			.links {
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
+
+			.links a {
+				color: var(--primary-color);
+				text-decoration: none;
+				padding: 8px;
+				background-color: var(--card-bg);
+				border-radius: 8px;
+				border: 1px solid var(--primary-color);
+			}
+
+			.status {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 8px 12px;
+				background-color: var(--card-bg);
+				border-radius: 8px;
+				margin-bottom: 16px;
+			}
+
+			.status-dot {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background-color: #4caf50;
+			}
+
+			#data-display {
+				font-family: monospace;
+				padding: 8px;
+				background-color: rgba(103, 58, 183, 0.1);
+				border-radius: 4px;
+				margin-top: 8px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<h1>🅰️ Angular Demo</h1>
+			<p>Communication bidirectionnelle avec Android</p>
+		</div>
+
+		<div class="status">
+			<div class="status-dot"></div>
+			<span>Bridge Android connecté</span>
+		</div>
+
+		<div class="card">
+			<h2>📤 Événements Angular → Android</h2>
+			<div class="btn-group">
+				<button
+					class="btn btn-primary"
+					onclick="sendToAndroid('button_click:primary')"
+				>
+					Bouton Click
+				</button>
+				<button
+					class="btn btn-secondary"
+					onclick="sendToAndroid('form_submit:data')"
+				>
+					Form Submit
+				</button>
+				<button
+					class="btn btn-primary"
+					onclick="sendToAndroid('user_action:scroll')"
+				>
+					User Action
+				</button>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>📥 Données reçues d'Android</h2>
+			<div id="data-display">En attente de données...</div>
+		</div>
+
+		<div class="card">
+			<h2>🔗 Test des Routes (Guard)</h2>
+			<div class="links">
+				<a href="https://angular.io">✅ angular.io (autorisé)</a>
+				<a href="/admin">🚫 /admin (bloqué)</a>
+				<a href="/settings">🚫 /settings (bloqué)</a>
+				<a href="https://google.com">🌐 google.com (navigateur externe)</a>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>📋 Console</h2>
+			<div class="console" id="console">
+				<div class="console-line">Bridge initialisé...</div>
+			</div>
+		</div>
+
+		<script>
+			// Fonction pour envoyer des messages à Android
+			function sendToAndroid(message) {
+				logToConsole("→ Envoi: " + message, "angular");
+
+				if (window.AndroidBridge) {
+					window.AndroidBridge.postMessage(message);
+				} else {
+					logToConsole("⚠️ Bridge non disponible", "error");
+				}
+			}
+
+			// Fonction appelée par Android pour envoyer des données
+			window.receiveFromAndroid = function (data) {
+				logToConsole("← Reçu: " + data, "android");
+
+				const handlers = {
+					update_theme: handleThemeUpdate,
+					show_alert: handleShowAlert,
+					update_data: handleDataUpdate,
+				};
+
+				const [action, value] = data.split(":");
+				const handler = handlers[action];
+
+				if (handler) {
+					handler(value);
+				}
+			};
+
+			function handleThemeUpdate(theme) {
+				document.documentElement.setAttribute("data-theme", theme);
+				document.getElementById("data-display").textContent =
+					"Theme changé: " + theme;
+			}
+
+			function handleShowAlert(message) {
+				document.getElementById("data-display").textContent =
+					"Message Android: " + message;
+			}
+
+			function handleDataUpdate(timestamp) {
+				document.getElementById("data-display").textContent =
+					"Données mises à jour: " +
+					new Date(parseInt(timestamp)).toLocaleTimeString();
+			}
+
+			function logToConsole(message, type) {
+				const console = document.getElementById("console");
+				const line = document.createElement("div");
+				line.className = "console-line " + (type || "");
+				line.textContent = message;
+				console.appendChild(line);
+				console.scrollTop = console.scrollHeight;
+			}
+
+			// Log initial
+			logToConsole("Page chargée", "angular");
+
+			if (window.AndroidBridge) {
+				logToConsole("✅ Bridge Android détecté", "angular");
+				window.AndroidBridge.log("Page Angular initialisée");
+			}
+		</script>
+	</body>
+</html>
